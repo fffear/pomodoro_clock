@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <title>Pomodoro Clock</title>
+            <link rel="stylesheet" type="text/css" href="style.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+            <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
+            <meta charset="UTF-8">
+        </head>
+        <body>
+            <div id="container">
+                <div id="main">
+                    <h1>Pomodoro Clock</h1>
+                    <div id="settings">
+                        <div id="settings-heading">
+                            <div class="session"><h3>Session</h3></div>
+                            <div><h3>Break</h3></div>
+                        </div>
+                        <div id="settings-input">
+                            <i class="fa fa-angle-up fa-2x"></i>
+                            <div id="session-minute">25</div>
+                            <i class="fa fa-angle-down fa-2x"></i>
+                            <i class="fa fa-angle-up fa-2x"></i>
+                            <div id="break-minute">5</div>
+                            <i class="fa fa-angle-down fa-2x"></i>
+                        </div>
+                    </div>
+                    <div id="clock">
+                        <div id="start-stop-reset-btns">
+                            <i id="start" class="fa fa-play fa-2x"></i>
+                            <i id="reset" class="fa fa-sync-alt fa-2x"></i>
+                        </div>
+                        <div id="timer">
+                            <div><h2 class="session">Session</h2></div>
+                            <div><p id="time">25:00</p></div>
+                        </div>
+                        <div id="pause-stop-btns">
+                            <i id="pause" class="fas fa-pause fa-2x"></i>
+                            <i id="stop" class="fas fa-stop fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <script src="javascript.js"></script>
+        </body>
+    </html>
