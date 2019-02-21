@@ -41,7 +41,7 @@ h1 {
 #settings-input {
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: space-around;
     height: 40px;
 }
 
@@ -49,9 +49,11 @@ h1 {
     font-size: 1.5em;
 }
 
-.settingsTitle {
-    background-color: #000;
-    color: #FFF;
+#session-minute {
+    text-align: center;
+}
+
+.button {
     cursor: pointer;
 }
 
