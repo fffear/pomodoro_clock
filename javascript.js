@@ -19,6 +19,7 @@ displayTime.textContent = timeValue;
 
 const hoverColor = (e) => e.target.classList.contains("button") ? e.target.style.color = "yellow": false;
 const removeHoverColor = (e) => e.target.classList.contains("button") ? e.target.style.color = "white": false;
+const addZeroPadding = (num) => "0" + num;
 
 function changeSessionTime(e) {
     if (sessionValue == 1 && e.target.id == "increase-session") {
@@ -53,10 +54,6 @@ function changeBreakTime(e) {
     } else {
         return;
     }
-}
-
-function addZeroPadding(num) {
-    return "0" + num;
 }
 
 function updateTimeDisplay() {
@@ -157,37 +154,43 @@ function stopTimer(e) {
 }
 
 function updateTime() {
-    let timeArray = timeValue.split(":");
+    timeArray = timeValue.split(":");
+    hour = Math.floor(sessionValue / 60);
+
     const seconds = timeArray[timeArray.length - 1];
     const minutes = timeArray[timeArray.length - 2];
+    const hours = timeArray[timeArray.length - 3];
 
-    if (seconds == "00" && minutes >= 11) {
-        timeArray[timeArray.length - 1] = "59";
-        timeArray[timeArray.length - 2] -= 1;
-    } else if (seconds == "00" && minutes < 11) {
-        timeArray[timeArray.length - 1] = "59";
-        timeArray[timeArray.length - 2] = addZeroPadding(minutes - 1);
-    } else if (seconds >= "11" && seconds <= "59") {
-        timeArray[timeArray.length - 1] -= 1;
-    } else if (seconds <= "10") {
-        timeArray[timeArray.length - 1] = addZeroPadding(seconds - 1);
-    }
+        if (seconds == "00" && minutes == "00" && hours == "01") {
+            timeArray.shift();
+            timeArray[timeArray.length - 2] = "59";
+            timeArray[timeArray.length - 1] = "59";
+        } else if (seconds == "00" && minutes == "00" && hours >= "02" && hours <= "09") {
+            timeArray[timeArray.length -3] = addZeroPadding(hours - 1);
+            timeArray[timeArray.length - 2] = "59";
+            timeArray[timeArray.length - 1] = "59";
+        } else if (seconds == "00" && minutes >= "11") {
+            timeArray[timeArray.length - 1] = "59";
+            timeArray[timeArray.length - 2] -= 1;
+        } else if (seconds == "00" && minutes < 11) {
+            timeArray[timeArray.length - 1] = "59";
+            timeArray[timeArray.length - 2] = addZeroPadding(minutes - 1);
+        } else if (seconds >= "11" && seconds <= "59") {
+            timeArray[timeArray.length - 1] -= 1;
+        } else if (seconds <= "10") {
+            timeArray[timeArray.length - 1] = addZeroPadding(seconds - 1);
+        }
     timeValue = timeArray.join(":");
     displayTime.textContent = timeValue;
+    console.log(timeValue);
 
     if (timeValue == "00:00") {
-        clearInterval(intervalID);
+        clearInterval(intervalID); 
+        timeValue = covertBreakValueToTimer();
+        displayTime.textContent = timeValue;
+        console.log(timeValue);
     }
 }
-
-mainBody.addEventListener("mouseover", hoverColor);
-mainBody.addEventListener("mouseout", removeHoverColor);
-mainBody.addEventListener("click", changeSessionTime);
-mainBody.addEventListener("click", changeBreakTime);
-mainBody.addEventListener("click", startTimer);
-mainBody.addEventListener("click", pauseTimer);
-mainBody.addEventListener("click", stopTimer);
-mainBody.addEventListener("click", resetToDefaultSettings);
 
 function resetToDefaultSettings(e) {
     if (e.target.id === "reset") {
@@ -203,4 +206,84 @@ function resetToDefaultSettings(e) {
         mainBody.addEventListener("click", changeBreakTime);
         mainBody.addEventListener("click", startTimer);
     }
+}
+
+mainBody.addEventListener("mouseover", hoverColor);
+mainBody.addEventListener("mouseout", removeHoverColor);
+mainBody.addEventListener("click", changeSessionTime);
+mainBody.addEventListener("click", changeBreakTime);
+mainBody.addEventListener("click", startTimer);
+mainBody.addEventListener("click", pauseTimer);
+mainBody.addEventListener("click", stopTimer);
+mainBody.addEventListener("click", resetToDefaultSettings);
+
+function covertBreakValueToTimer() {
+    let breakHour = Math.floor(breakValue / 60);
+    let breakMinute = breakValue % 60;
+    let breakArray = [];
+    let breakTime;
+    
+    if (breakValue >= 1 && breakValue <= 9) {
+        breakTime = addZeroPadding(breakValue) + ":00";
+        breakArray = breakTime.split(":");
+    } else if (breakValue >= 10 && breakValue <= 59) {
+        breakTime = breakValue + ":00";
+        breakArray = breakTime.split(":");
+    } else if (breakValue >= 60) {
+        if (breakMinute >= 0 && breakMinute <= 9 && breakHour >= 1 && breakHour <= 9) {
+            breakArray[0] = addZeroPadding(breakHour);
+            breakArray[1] = addZeroPadding(breakMinute);
+            breakArray[2] = "00";
+        } else if (breakMinute >= 10 && breakMinute <= 59 && breakHour >= 1 && breakHour <= 9) {
+            breakArray[0] = addZeroPadding(breakHour);
+            breakArray[1] = breakMinute;
+            breakArray[2] = "00";
+        } else if (breakHour >= 10) {
+            if (breakMinute >= 0 && breakMinute <= 9) {
+                breakArray[0] = breakHour;
+                breakArray[1] = addZeroPadding(breakMinute);
+                breakArray[2] = "00";
+            } else if (breakMinute >= 10 && breakMinute <= 59) {
+                breakArray[0] = breakHour;
+                breakArray[1] = breakMinute;
+                breakArray[2] = "00";
+            }
+        }
+    }
+    breakTime = breakArray.join(":");
+    return breakTime;
+}
+
+function startBreakTimer() {
+    breakArray = breakValue.split(":");
+    hour = Math.floor(sessionValue / 60);
+
+    const seconds = breakArray[breakArray.length - 1];
+    const minutes = breakArray[breakArray.length - 2];
+    const hours = breakArray[breakArray.length - 3];
+
+    if (seconds == "00" && minutes == "00" && hours == "01") {
+        breakArray.shift();
+        breakArray[breakArray.length - 2] = "59";
+        breakArray[breakArray.length - 1] = "59";
+    } else if (seconds == "00" && minutes == "00" && hours >= "02" && hours <= "09") {
+        breakArray[breakArray.length -3] = addZeroPadding(hours - 1);
+        breakArray[breakArray.length - 2] = "59";
+        breakArray[breakArray.length - 1] = "59";
+    } else if (seconds == "00" && minutes >= "11") {
+        breakArray[breakArray.length - 1] = "59";
+        breakArray[breakArray.length - 2] -= 1;
+    } else if (seconds == "00" && minutes < 11) {
+        breakArray[breakArray.length - 1] = "59";
+        breakArray[breakArray.length - 2] = addZeroPadding(minutes - 1);
+    } else if (seconds >= "11" && seconds <= "59") {
+        breakArray[breakArray.length - 1] -= 1;
+    } else if (seconds <= "10") {
+        breakArray[breakArray.length - 1] = addZeroPadding(seconds - 1);
+    }
+    breakValue = breakArray.join(":");
+    displayTime.textContent = breakValue;
+    console.log(breakValue);
+
+    if (breakValue == "00:00") clearInterval(intervalID); 
 }
