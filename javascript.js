@@ -1,6 +1,7 @@
 const mainBody = document.getElementById("main");
 const modeIndicator = document.querySelector("#mode-indicator");
 const audio = document.getElementById("beep");
+const buttonSound = document.getElementById("buttonSound");
 let repeatBeep;
 let NumberOfBeeps = 0;
 
@@ -26,6 +27,12 @@ let timeValue = "25:00";
 const displayTime = document.getElementById("time");
 updateTimerDisplay();
 
+function playButtonSound() {
+    if (!buttonSound) return;
+    buttonSound.currentTime = 0;
+    buttonSound.play();
+}
+
 function changeSessionTime(e) {
     const incrementSession = () => sessionValue += 1;
     const decrementSession = () => sessionValue -= 1;
@@ -33,14 +40,17 @@ function changeSessionTime(e) {
     if (sessionValue == 1 && e.target.id == "increase-session") {
         incrementSession();
         updateSession();
+        playButtonSound();
     } else if (sessionValue == 1 && e.target.id == "decrease-session" || sessionValue == 1440 && e.target.id == "increase-session") {
         return;
     } else if (e.target.id == "increase-session") {
         incrementSession();
         updateSession();
+        playButtonSound();
     } else if (e.target.id == "decrease-session") {
         decrementSession();
         updateSession();
+        playButtonSound();
     } else {
         return;
     }
@@ -55,14 +65,17 @@ function changeBreakTime(e) {
     if (breakValue == 1 && e.target.id == "increase-break") {
         incrementBreak();
         updateBreak();
+        playButtonSound();
     } else if (breakValue == 1 && e.target.id == "decrease-break" || breakValue == 1440 && e.target.id == "increase-break") {
         return;
     } else if (e.target.id == "increase-break") {
         incrementBreak();
         updateBreak();
+        playButtonSound();
     } else if (e.target.id == "decrease-break") {
         decrementBreak();
         updateBreak();
+        playButtonSound();
     } else {
         return;
     }
@@ -112,6 +125,7 @@ function displayZeroTime() {
 
 function startTimer(e) {
     if (e.target.id === "start") {
+        playButtonSound();
         intervalID = setInterval(updateTime, 1000);
 
         mainBody.removeEventListener("click", changeSessionTime);
@@ -122,6 +136,7 @@ function startTimer(e) {
 
 function pauseTimer(e) {
     if (e.target.id === "pause") {
+        playButtonSound();
         clearInterval(intervalID, 1000);
         mainBody.addEventListener("click", startTimer);
     } 
@@ -129,6 +144,7 @@ function pauseTimer(e) {
 
 function stopTimer(e) {
     if (e.target.id === "stop") {
+        playButtonSound();
         clearInterval(intervalID);
         convertNumberToTimer(sessionValue);
         updateTimerDisplay();
@@ -156,7 +172,7 @@ function updateTime() {
     
     if (timeValue == "00:00") {
         soundOnEnd();
-        repeatNTimes();
+        repeatInfiniteTimes();
     }
 
     if (NumberOfBeeps > 9) {
@@ -220,6 +236,7 @@ function changeAndStartTimerMode(value) {
 
 function resetToDefaultSettings(e) {
     if (e.target.id === "reset") {
+        playButtonSound();
         sessionValue = 25;
         updateSession();
         breakValue = 5;
@@ -243,7 +260,7 @@ function soundOnEnd() {
     NumberOfBeeps++;
 }
 
-function repeatNTimes() {
+function repeatInfiniteTimes() {
     repeatBeep = setInterval(soundOnEnd, 1000);
     
         
