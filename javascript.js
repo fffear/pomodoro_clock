@@ -1,4 +1,5 @@
 const mainBody = document.getElementById("main");
+const modeIndicator = document.querySelector("#mode-indicator");
 
 const hoverColor = (e) => e.target.classList.contains("button") ? e.target.style.color = "yellow": false;
 const removeHoverColor = (e) => e.target.classList.contains("button") ? e.target.style.color = "white": false;
@@ -29,7 +30,7 @@ function changeSessionTime(e) {
     if (sessionValue == 1 && e.target.id == "increase-session") {
         incrementSession();
         updateSession();
-    } else if (sessionValue == 1 && e.target.id == "decrease-session") {
+    } else if (sessionValue == 1 && e.target.id == "decrease-session" || sessionValue == 1440 && e.target.id == "increase-session") {
         return;
     } else if (e.target.id == "increase-session") {
         incrementSession();
@@ -51,7 +52,7 @@ function changeBreakTime(e) {
     if (breakValue == 1 && e.target.id == "increase-break") {
         incrementBreak();
         updateBreak();
-    } else if (breakValue == 1 && e.target.id == "decrease-break") {
+    } else if (breakValue == 1 && e.target.id == "decrease-break" || breakValue == 1440 && e.target.id == "increase-break") {
         return;
     } else if (e.target.id == "increase-break") {
         incrementBreak();
@@ -101,6 +102,11 @@ function updateTimerDisplay() {
     displayTime.textContent = timeValue;
 }
 
+function displayZeroTime() {
+    timeValue = "00:00";
+    updateTimerDisplay();
+}
+
 function startTimer(e) {
     if (e.target.id === "start") {
         intervalID = setInterval(updateTime, 1000);
@@ -123,6 +129,8 @@ function stopTimer(e) {
         clearInterval(intervalID);
         convertNumberToTimer(sessionValue);
         updateTimerDisplay();
+        modeIndicator.textContent = "Session";
+        displayTime.removeAttribute("style");
 
         mainBody.addEventListener("click", changeSessionTime);
         mainBody.addEventListener("click", changeBreakTime);
@@ -134,6 +142,14 @@ function updateTime() {
     timeArray = timeValue.split(":");
     hour = Math.floor(sessionValue / 60);
 
+    countdownTimer();
+    timeValue = timeArray.join(":");
+    updateTimerDisplay();
+    colorTimer();
+    switchTimerMode();
+}
+
+function countdownTimer() {
     const seconds = timeArray[timeArray.length - 1];
     const minutes = timeArray[timeArray.length - 2];
     const hours = timeArray[timeArray.length - 3];
@@ -157,25 +173,33 @@ function updateTime() {
         } else if (seconds <= "10") {
             timeArray[timeArray.length - 1] = addZeroPadding(seconds - 1);
         }
-    timeValue = timeArray.join(":");
-    displayTime.textContent = timeValue;
-    console.log(timeValue);
+}
 
-    const modeIndicator = document.querySelector("#mode-indicator");
-
-    if (timeValue == "00:00" && modeIndicator.textContent == "Session") {
-        clearInterval(intervalID); 
+function switchTimerMode() {
+    if (timeValue.search(/\-/) > -1 && modeIndicator.textContent == "Session") {
         modeIndicator.textContent = "Break";
-        convertNumberToTimer(breakValue);
-        updateTimerDisplay();
-        intervalID = setInterval(updateTime, 1000);
-    } else if (timeValue == "00:00" && modeIndicator.textContent == "Break") {
-        clearInterval(intervalID); 
+        changeAndStartTimerMode(breakValue);
+    } else if (timeValue.search(/\-/) > -1 && modeIndicator.textContent == "Break") {
         modeIndicator.textContent = "Session";
-        convertNumberToTimer(sessionValue);
-        updateTimerDisplay();
-        intervalID = setInterval(updateTime, 1000);
+        changeAndStartTimerMode(sessionValue);
     }
+}
+
+function colorTimer() {
+    if (timeArray.length == 2 && timeArray[timeArray.length - 2] == 0 && timeArray[timeArray.length - 1] >= 0 && timeArray[timeArray.length - 1] <= 5) {
+        displayTime.setAttribute("style", "color:red");  
+    } else if (timeArray.length == 2 && timeArray[timeArray.length - 2] == 0 && timeArray[timeArray.length - 1] >= 6 && timeArray[timeArray.length - 1] <= 15) {
+        displayTime.setAttribute("style", "color:yellow");
+    } else {
+        displayTime.setAttribute("style", "color:green");
+    }
+}
+
+function changeAndStartTimerMode(value) {
+    clearInterval(intervalID); 
+    convertNumberToTimer(value);
+    updateTimerDisplay();
+    intervalID = setInterval(updateTime, 1000);
 }
 
 function resetToDefaultSettings(e) {
@@ -187,6 +211,8 @@ function resetToDefaultSettings(e) {
         clearInterval(intervalID);
         convertNumberToTimer(sessionValue);
         updateTimerDisplay();
+        modeIndicator.textContent = "Session";
+        displayTime.removeAttribute("style");
 
         mainBody.addEventListener("click", changeSessionTime);
         mainBody.addEventListener("click", changeBreakTime);

@@ -51,6 +51,12 @@ h1 {
 
 #session-minute {
     text-align: center;
+    width: 60px;
+}
+
+#break-minute {
+    text-align: center;
+    width: 60px;
 }
 
 .button {
