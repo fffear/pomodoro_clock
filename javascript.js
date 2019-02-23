@@ -1,5 +1,8 @@
 const mainBody = document.getElementById("main");
 const modeIndicator = document.querySelector("#mode-indicator");
+const audio = document.getElementById("beep");
+let repeatBeep;
+let NumberOfBeeps = 0;
 
 const hoverColor = (e) => e.target.classList.contains("button") ? e.target.style.color = "yellow": false;
 const removeHoverColor = (e) => e.target.classList.contains("button") ? e.target.style.color = "white": false;
@@ -135,6 +138,8 @@ function stopTimer(e) {
         mainBody.addEventListener("click", changeSessionTime);
         mainBody.addEventListener("click", changeBreakTime);
         mainBody.addEventListener("click", startTimer);
+        clearInterval(repeatBeep);
+        NumberOfBeeps = 0;
     }
 }
 
@@ -147,6 +152,17 @@ function updateTime() {
     updateTimerDisplay();
     colorTimer();
     switchTimerMode();
+
+    
+    if (timeValue == "00:00") {
+        soundOnEnd();
+        repeatNTimes();
+    }
+
+    if (NumberOfBeeps > 9) {
+        clearInterval(repeatBeep);
+        NumberOfBeeps = 0;
+    }
 }
 
 function countdownTimer() {
@@ -217,7 +233,20 @@ function resetToDefaultSettings(e) {
         mainBody.addEventListener("click", changeSessionTime);
         mainBody.addEventListener("click", changeBreakTime);
         mainBody.addEventListener("click", startTimer);
+        clearInterval(repeatBeep);
+        NumberOfBeeps = 0;
     }
+}
+
+function soundOnEnd() {
+    audio.play();
+    NumberOfBeeps++;
+}
+
+function repeatNTimes() {
+    repeatBeep = setInterval(soundOnEnd, 1000);
+    
+        
 }
 
 mainBody.addEventListener("mouseover", hoverColor);
